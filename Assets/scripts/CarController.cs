@@ -35,6 +35,7 @@ public class CarController : MonoBehaviour
     private float resetCounter;
 
     public bool isAI;
+    public AudioSource engineSound;
 
 
     public int currentTarget;
@@ -136,7 +137,11 @@ public class CarController : MonoBehaviour
 
             leftFrontWheel.localRotation = Quaternion.Euler(leftFrontWheel.localRotation.eulerAngles.x, (turnInput * maxWheelTurn) - 180, leftFrontWheel.localRotation.eulerAngles.z);
             rightFrontWheel.localRotation = Quaternion.Euler(rightFrontWheel.localRotation.eulerAngles.x, (turnInput * maxWheelTurn), rightFrontWheel.localRotation.eulerAngles.z);
-
+            
+            if (engineSound != null)
+            {
+                engineSound.pitch = 1f + ((theRB.velocity.magnitude / maxSpeed) * 2f);
+            }
         }
 
     }
