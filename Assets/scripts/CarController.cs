@@ -67,83 +67,86 @@ public class CarController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!RaceManager.instance.isStarting)
+        if(!PauseManager.isPaused)
         {
-            lapTime += Time.deltaTime;
-
-
-            if (!isAI)
-            {
-                var ts = System.TimeSpan.FromSeconds(lapTime);
-                UIManager.instance.currentLapTimeText.text = string.Format("{0:00}m{1:00}.{2:000}s", ts.Minutes, ts.Seconds, ts.Milliseconds);
-
-                speedInput = 0f;
-                if (Input.GetAxis("Vertical") > 0)
+                if (!RaceManager.instance.isStarting)
                 {
-                    speedInput = Input.GetAxis("Vertical") * forwardAccel;
+                    lapTime += Time.deltaTime;
+
+
+                    if (!isAI)
+                    {
+                        var ts = System.TimeSpan.FromSeconds(lapTime);
+                        UIManager.instance.currentLapTimeText.text = string.Format("{0:00}m{1:00}.{2:000}s", ts.Minutes, ts.Seconds, ts.Milliseconds);
+
+                        speedInput = 0f;
+                        if (Input.GetAxis("Vertical") > 0)
+                        {
+                            speedInput = Input.GetAxis("Vertical") * forwardAccel;
+                        }
+                        else if (Input.GetAxis("Vertical") < 0)
+                        {
+                            speedInput = Input.GetAxis("Vertical") * reverseAccel;
+                        }
+
+                        turnInput = Input.GetAxis("Horizontal");
+
+                        if (resetCounter > 0)
+                        {
+                            resetCounter -= Time.deltaTime;
+                        }
+
+                        if (Input.GetKeyDown(KeyCode.R) && resetCounter <= 0)
+                        {
+                            ResetToTrack();
+                        }
+                    }
+
+                    else
+                    {
+
+                        targetPoint.y = transform.position.y;
+
+                        if (Vector3.Distance(transform.position, targetPoint) < aiReachPointRange)
+                        {
+                            SetNextAITarget();
+                        }
+
+                        Vector3 targetDir = targetPoint - transform.position;
+                        float angle = Vector3.Angle(targetDir, transform.forward);
+
+                        Vector3 localPos = transform.InverseTransformPoint(targetPoint);
+                        if (localPos.x < 0f)
+                        {
+                            angle = -angle;
+                        }
+
+                        turnInput = Mathf.Clamp(angle / aiMaxTurn, -1f, 1f);
+
+                        if (Mathf.Abs(angle) < aiMaxTurn)
+                        {
+                            aiSpeedInput = Mathf.MoveTowards(aiSpeedInput, 1f, aiAccelerateSpeed);
+                        }
+                        else
+                        {
+                            aiSpeedInput = Mathf.MoveTowards(aiSpeedInput, aiTurnSpeed, aiAccelerateSpeed);
+                        }
+
+
+                        speedInput = aiSpeedInput * forwardAccel * aiSpeedMod;
+
+                    }
+
+                    leftFrontWheel.localRotation = Quaternion.Euler(leftFrontWheel.localRotation.eulerAngles.x, (turnInput * maxWheelTurn) - 180, leftFrontWheel.localRotation.eulerAngles.z);
+                    rightFrontWheel.localRotation = Quaternion.Euler(rightFrontWheel.localRotation.eulerAngles.x, (turnInput * maxWheelTurn), rightFrontWheel.localRotation.eulerAngles.z);
+                    
+                    if (engineSound != null)
+                    {
+                        engineSound.pitch = 1f + ((theRB.velocity.magnitude / maxSpeed) * 2f);
+                    }
                 }
-                else if (Input.GetAxis("Vertical") < 0)
-                {
-                    speedInput = Input.GetAxis("Vertical") * reverseAccel;
-                }
 
-                turnInput = Input.GetAxis("Horizontal");
-
-                if (resetCounter > 0)
-                {
-                    resetCounter -= Time.deltaTime;
-                }
-
-                if (Input.GetKeyDown(KeyCode.R) && resetCounter <= 0)
-                {
-                    ResetToTrack();
-                }
-            }
-
-            else
-            {
-
-                targetPoint.y = transform.position.y;
-
-                if (Vector3.Distance(transform.position, targetPoint) < aiReachPointRange)
-                {
-                    SetNextAITarget();
-                }
-
-                Vector3 targetDir = targetPoint - transform.position;
-                float angle = Vector3.Angle(targetDir, transform.forward);
-
-                Vector3 localPos = transform.InverseTransformPoint(targetPoint);
-                if (localPos.x < 0f)
-                {
-                    angle = -angle;
-                }
-
-                turnInput = Mathf.Clamp(angle / aiMaxTurn, -1f, 1f);
-
-                if (Mathf.Abs(angle) < aiMaxTurn)
-                {
-                    aiSpeedInput = Mathf.MoveTowards(aiSpeedInput, 1f, aiAccelerateSpeed);
-                }
-                else
-                {
-                    aiSpeedInput = Mathf.MoveTowards(aiSpeedInput, aiTurnSpeed, aiAccelerateSpeed);
-                }
-
-
-                speedInput = aiSpeedInput * forwardAccel * aiSpeedMod;
-
-            }
-
-            leftFrontWheel.localRotation = Quaternion.Euler(leftFrontWheel.localRotation.eulerAngles.x, (turnInput * maxWheelTurn) - 180, leftFrontWheel.localRotation.eulerAngles.z);
-            rightFrontWheel.localRotation = Quaternion.Euler(rightFrontWheel.localRotation.eulerAngles.x, (turnInput * maxWheelTurn), rightFrontWheel.localRotation.eulerAngles.z);
-            
-            if (engineSound != null)
-            {
-                engineSound.pitch = 1f + ((theRB.velocity.magnitude / maxSpeed) * 2f);
-            }
         }
-
     }
 
 

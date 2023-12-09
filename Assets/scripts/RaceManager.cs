@@ -157,6 +157,7 @@ public class RaceManager : MonoBehaviour
         }
 
 
+
         UIManager.instance.resultsScreen.SetActive(true);
     }
 
