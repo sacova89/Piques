@@ -10,6 +10,7 @@ public class PauseManager : MonoBehaviour
     [SerializeField] private GameObject buttonsPanel;
     [SerializeField] private GameObject dosButtonsPanel;
     [SerializeField] private GameObject canvasFooter;
+    public GameObject audioClip;
 
     //public GameObject sprclassicPanel;
 
@@ -49,6 +50,7 @@ public class PauseManager : MonoBehaviour
 
     public void Pause()
     {
+        audioClip.SetActive(false);
         canvasFooter.SetActive(false);
         pauseMenu.SetActive(true);
         //testAnimator.GetComponent<Animator>().Play("Test");
@@ -67,6 +69,7 @@ public class PauseManager : MonoBehaviour
      *  Le asigna el valor FALSO a la variable booleana isPaused**/
     public void Resume()
     {
+        audioClip.SetActive(true);
         pauseMenu.SetActive(false);
         dosButtonsPanel.SetActive(false);
         canvasFooter.SetActive(true);
