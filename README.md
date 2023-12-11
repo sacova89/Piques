@@ -10,5 +10,5 @@
 ### Vista: Tercera Persona
 ### Plataforma: PC.
 ### Lenguaje de programación: C#
-### Descripción general del videojuego:
-El jugador podrá cambiar el valor del volumen de la música y los efectos de sonido a su gusto. El jugador podrá pausar el juego cuando le sea necesario. El jugador podrá ver los controles en el menú principal o menú de pausa.
+### Descripción general del videojuego: 
+Un juego de carreras de carros de Control remoto.
